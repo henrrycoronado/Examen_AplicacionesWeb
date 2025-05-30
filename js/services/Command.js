@@ -12,7 +12,8 @@ export class Command {
 export const Commands = {
     FOCUS: "focus",
     SAVE: "save",
-    SEARCH: "search"
+    SEARCH: "search",
+    FAVORITE: "favorite",
 };
 
 export const CommandExecutor = {
@@ -24,6 +25,8 @@ export const CommandExecutor = {
             case Commands.SAVE:
                 break;
             case Commands.SEARCH:
+                break;
+            case Commands.FAVORITE:
                 break;
         }
     },
