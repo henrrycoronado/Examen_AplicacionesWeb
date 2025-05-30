@@ -1,4 +1,4 @@
-export default class LocalStorageService {
+export default class LocalStorage {
     constructor() {
         this.storage = window.localStorage;
     }
