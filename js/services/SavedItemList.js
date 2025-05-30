@@ -1,4 +1,4 @@
-import { observer } from "./Observer.js";
+import { observerMixim } from "./ObserverMixim.js";
 
 export class SavedItem {
   constructor(text) {
@@ -57,4 +57,4 @@ export class SavedItemList {
   }
 }
 
-Object.assign(SavedItemList.prototype, observer);
+Object.assign(SavedItemList.prototype, observerMixim); //esta es la asignacion del metodo con mixim

@@ -1,4 +1,4 @@
-export const observer = {
+export const observerMixim = {
     observers: new Set(),
     addObserver(obs) {
         this.observers.add(obs);
