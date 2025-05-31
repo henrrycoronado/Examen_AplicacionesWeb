@@ -1,33 +1,34 @@
-import { SavedItem, SavedItemList } from "./SavedItemList.js";
-
-export class Command {
-    name;
-    args;
-    constructor(name, args) {
-        this.name = name;
-        this.args = args;
-    }
-}
-
 export const Commands = {
-    FOCUS: "focus",
-    SAVE: "save",
-    SEARCH: "search",
-    FAVORITE: "favorite",
-};
-
-export const CommandExecutor = {
+    ADD: 'add',
+    DELETE: 'delete',
+  };
+  
+export class Command {
+    constructor(type, params = []) {
+      this.type = type;
+      this.params = params;
+    }
+  }
+  
+export  const CommandExecutor = {
     execute(command) {
-        const savedList = SavedItemList.getInstance();
-        switch (command.name) {
-            case Commands.FOCUS:
-                break;
-            case Commands.SAVE:
-                break;
-            case Commands.SEARCH:
-                break;
-            case Commands.FAVORITE:
-                break;
+      const list = SavedItemList.getInstance();
+  
+      switch (command.type) {
+        case Commands.ADD: {
+          const text = DOM.todoInput.value.trim();
+          if (text) {
+            list.add(new SavedItem(text));
+            DOM.todoInput.value = '';
+          }
+          break;
         }
+        case Commands.DELETE: {
+          const text = command.params[0];
+          list.delete(text);
+          break;
+        }
+      }
     },
-};
+  };
+  

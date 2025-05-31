@@ -1,23 +1,26 @@
-import { CommandExecutor, Command, Commands } from "./Command.js";
-export class SearchBarWeb {
-    constructor(){
+export class SearchBarWeb extends HTMLElement {
+    constructor() {
         super();
-        this.attachShadow({ mode: 'open'});
+        this.attachShadow({ mode: 'open' });
         const input = document.createElement('input');
-        input.textContent = 'Search';
+        input.id = 'search-bar';
+        input.placeholder = 'Search';
+        input.type = 'text';
         input.style.cssText = `
-            whidth: 100%;
+            width: 100%;
             height: max-content;
-            padding: 10px 10px;
+            padding: 15px 10px;
             border-radius: 16px;
             justify-content: center;
+            background-color:rgb(255, 255, 255);
+            color: white;
+            border: none;
         `;
-        input.type = 'text';
         input.addEventListener('mouseover', () => {
-            input.style.backgroundColor = '#45a049';
+            input.style.backgroundColor = '#FFFFF1';
         });
         input.addEventListener('mouseout', () => {
-            input.style.backgroundColor = '#4CAF50';
+            input.style.backgroundColor = '#FFFFFF';
         });
         this.shadowRoot.appendChild(input);
     }

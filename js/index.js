@@ -1,21 +1,37 @@
-import { SavedItem, SavedItemList } from "./services/SavedItemList.js";
-import { CommandExecutor, Command, Commands } from "./services/Command.js";
-import { LocalStorage } from "./services/localstorage.js";
+import { Router } from "./services/router.js";
+import { SavedItemList } from "./services/SavedItemList.js";
+import { HomePage } from "./components/HomePage.js";
+import { SavedPage } from "./components/SavedPage.js";
+import { FavoritePage } from "./components/FavoritePage.js";
+import { SearchBarWeb } from "./components/SearchBarWeb.js";
+import { SaveButtonWeb } from "./components/SaveButtonWeb.js";
+import { CardComponent } from "./components/CardComponent.js";
 
-document.addEventListener("keydown", function (event) {
-  if (event.key === "enter") {
-      event.preventDefault();
-      const cmd = new Command(Commands.SEARCH);
-      CommandExecutor.execute(cmd);
+globalThis.app = {};
+globalThis.DOM = {};
+const DOM = globalThis.DOM;
+
+function renderList() {
+  const container = DOM.todoList;
+  const items = SavedItemList.getInstance().items;
+  if (!container) return;
+
+  container.innerHTML = '';
+  for (const item of items) {
+    const card = document.createElement('card-component');
+    card.setAttribute('title', item.text);
+    card.setAttribute('body', 'Contenido generado dinámicamente.');
+    container.appendChild(card);
   }
-  if (event.ctrlKey && event.key === "K") {
-    event.preventDefault();
-    const cmd = new Command(Commands.FOCUS);
-    CommandExecutor.execute(cmd);
-  }
-  if (event.ctrlKey && event.key === "F") {
-    event.preventDefault();
-    const cmd = new Command(Commands.FAVORITE);
-    CommandExecutor.execute(cmd);
+}
+globalThis.renderList = renderList;
+
+document.addEventListener("DOMContentLoaded", () => {
+  app.router = Router;
+  app.router.init();
+
+  DOM.searchContainer = document.getElementById("search-container");
+  if (DOM.searchContainer) {
+    DOM.searchContainer.appendChild(document.createElement('search-bar'));
   }
 });
