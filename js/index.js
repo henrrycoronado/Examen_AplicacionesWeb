@@ -1,37 +1,82 @@
 import { Router } from "./services/router.js";
-import { SavedItemList } from "./services/SavedItemList.js";
-import { HomePage } from "./components/HomePage.js";
-import { SavedPage } from "./components/SavedPage.js";
-import { FavoritePage } from "./components/FavoritePage.js";
+import { ItemList } from "./services/ItemList.js";
+import { CommandExecutor, Command, Commands } from "./services/Command.js";
+import { LocalStorage } from "./services/localStorage.js";
+
 import { SearchBarWeb } from "./components/SearchBarWeb.js";
-import { SaveButtonWeb } from "./components/SaveButtonWeb.js";
-import { CardComponent } from "./components/CardComponent.js";
+
+import {HomePage} from "./components/HomePage.js";
 
 globalThis.app = {};
-globalThis.DOM = {};
-const DOM = globalThis.DOM;
+app.router = Router;
+
+function create_card(item){
+  const template = document.getElementById("card-template");
+  const clone = template.content.cloneNode(true);
+  clone.querySelector(".card-title").textContent = item.text;
+  clone.querySelector(".card-button-favorite").textContent = item.favorite? "eliminar de favorito" : "añadir de favorito";
+  clone.querySelector(".card-button-delete").addEventListener("click", () => {
+    const cmd = new Command(Commands.DELETE, item.text);
+    CommandExecutor.execute(cmd);
+  });
+  clone.querySelector(".card-button-favorite").addEventListener("click", () => {
+    const cmd = new Command(Commands.FAVORITE, item.text);
+    CommandExecutor.execute(cmd);
+  });
+  return clone;
+}
 
 function renderList() {
-  const container = DOM.todoList;
-  const items = SavedItemList.getInstance().items;
-  if (!container) return;
-
-  container.innerHTML = '';
-  for (const item of items) {
-    const card = document.createElement('card-component');
-    card.setAttribute('title', item.text);
-    card.setAttribute('body', 'Contenido generado dinámicamente.');
-    container.appendChild(card);
-  }
+    const list = ItemList.getInstance();
+    const page = document.getElementById("container").firstElementChild;
+    const shadow = page.shadowRoot;
+    const container = shadow.getElementById("ListItemContainer");
+    if(container.firstElementChild){
+        container.firstElementChild.remove();
+    }
+    const ul = document.createElement("ul");
+    const favorite = document.getElementById("favorite").checked;
+    ul.classList.add("body_list");
+    container.appendChild(ul);
+    if(favorite){
+        for (let item of list.getItems()) {
+            if(item.favorite){
+                let li = document.createElement("li");
+                let card = create_card(item);
+                li.appendChild(card);
+                ul.appendChild(li);
+            }
+        }
+        return;
+    }
+    for (let item of list.getItems()) {
+        let li = document.createElement("li");
+        let card = create_card(item);
+        li.appendChild(card);
+        ul.appendChild(li);
+    }
 }
-globalThis.renderList = renderList;
 
-document.addEventListener("DOMContentLoaded", () => {
-  app.router = Router;
-  app.router.init();
+window.addEventListener("DOMContentLoaded", () => {
+    app.router.init();
+    document.getElementById("search-container").appendChild(new SearchBarWeb());
+    ItemList.getInstance().addObserver(renderList);
 
-  DOM.searchContainer = document.getElementById("search-container");
-  if (DOM.searchContainer) {
-    DOM.searchContainer.appendChild(document.createElement('search-bar'));
-  }
+    document.getElementById("favorite").addEventListener("click", () => {
+        renderList();
+    });
+    document.addEventListener("keydown", function (event) {
+        if (event.ctrlKey && event.key === "k") {
+            event.preventDefault();
+            const cmd = new Command(Commands.FOCUS);
+            CommandExecutor.execute(cmd);
+        }
+        if (event.key === "Enter") {
+            event.preventDefault();
+            const cmd = new Command(Commands.SEARCH);
+            CommandExecutor.execute(cmd);
+        }
+    });
 });
+
+

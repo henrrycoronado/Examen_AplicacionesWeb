@@ -1,48 +1,38 @@
-export default class LocalStorage {
-    constructor() {
-        this.storage = window.localStorage;
-    }
-    save(key, data) {
-        try {
-            const serializedData = JSON.stringify(data);
-            this.storage.setItem(key, serializedData);
-            return true;
-        } catch (error) {
-            console.error('Error al guardar en el local storage:', error);
-            return false;
+import { ItemList } from "./ItemList.js";
+
+const List = ItemList.getInstance();
+export const LocalStorage = {
+    getProjects() {
+        return JSON.parse(localStorage.getItem("projects") || "[]");
+    },
+    load(id) {
+        if (localStorage.getItem("projects")) {
+            const projects = JSON.parse(localStorage.getItem("projects"));
+            if(id >= 0 && id < projects.length){
+                for (let t of projects[id]) {
+                    ItemList.add(t);
+                }
+            }
         }
-    }
-    get(key) {
-        try {
-            const item = this.storage.getItem(key);
-            return item ? JSON.parse(item) : null;
-        } catch (error) {
-            console.error('Error al obtener en el local storage:', error);
-            return null;
+    },
+    delete(id) {
+        if (localStorage.getItem("projects")) {
+            const projects = JSON.parse(localStorage.getItem("projects"));
+            if(id >= 0 && id < projects.length){
+                projects.splice(i, i);
+                localStorage.setItem("projects", JSON.stringify(projects));
+            }
         }
-    }
-    remove(key) {
-        try {
-            this.storage.removeItem(key);
-            return true;
-        } catch (error) {
-            console.error('Error eliminando en el local storage:', error);
-            return false;
+    },
+    save() {
+        const array = Array.from(List.getData());
+        if(!array || array.length == 0){
+            window.alert("no se puede guardar un proyecto vacio");
+            return;
         }
-    }
-    clear() {
-        try {
-            this.storage.clear();
-            return true;
-        } catch (error) {
-            console.error('Error limpiando la local storage:', error);
-            return false;
-        }
-    }
-    exists(key) {
-        return this.storage.getItem(key) !== null ? true : false;
-    }
-    getAllKeys() {
-        return Object.keys(this.storage);
-    }
-}
+        let projects = JSON.parse(localStorage.getItem("projects") || "[]");
+        projects.push(array);
+        localStorage.setItem("projects", JSON.stringify(projects));
+        List.clear();
+    },
+};

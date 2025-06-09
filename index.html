@@ -11,6 +11,10 @@
     <header>
         <nav class="navbar">
             <div id="search-container" class="navbar-search-container">
+                <div>
+                    <input type="checkbox" id="favorite">
+                    <label for="favorite">Cards Favorite</label>
+                </div>
             </div>
             <div>
                 <a href="#/" class="navbar-btn-container">
@@ -27,5 +31,27 @@
     </header>
     <main id="container" class="main">
     </main>
+    <template id="card-template">
+        <div class="card">
+            <h2 class="card-title"></h2>
+            <button class="card-button-delete"> Eliminar </button>
+            <button class="card-button-favorite"> Añadir favorito</button>
+        </div>
+    </template>
+    <template id="home-page">
+        <div id="home-container">
+            <div class="body_title">
+                <h1>Gestionar Cards</h1>
+            </div>
+            <div class="body_input-container">
+                <input class="body_input" type="text" id="input_card" placeholder="Enter text here...">
+                <button class="body_button" id="button_card-add">Add Item</button>
+                <button class="body_button" id="button_card-clear">Clear List</button>
+                <button class="body_button" id="button_card-save">Save List</button>
+            </div>
+            <div id="ListItemContainer" class="body_list-container">
+            </div>
+        </div>
+    </template>
 </body>
 </html>

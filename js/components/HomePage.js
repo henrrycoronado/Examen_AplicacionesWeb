@@ -1,40 +1,35 @@
-import { SavedItemList } from "../services/SavedItemList.js";
-import { Command } from "../services/Command.js";
+import { Command, Commands, CommandExecutor } from "../services/Command.js";
 
 export class HomePage extends HTMLElement {
-    connectedCallback() {
-        this.innerHTML = `
-            <div class="list">
-                <div class="list-titulo">Lista de elementos - Gestion</div>
-                <a class="list-input-container">
-                    <input id="textInput" class="list-input" type="text" placeholder="nuevo texto"/>
-                </a>
-                <a class="list-btns-container">
-                    <div id="btn1" class="list-btn-container"></div>
-                    <div class="list-btn-container">
-                        <button id="limpiar" class="list-btn">Reiniciar Lista</button>
-                    </div>
-                </a>
-                <div class="list-content-container">
-                    <ul id="listContent" class="list-content"></ul>
-                </div>
-            </div>
-        `;
-
-        const saveButton = document.createElement("save-button");
-        this.querySelector("#btn1")?.appendChild(saveButton);
-
-        globalThis.DOM.todoList = this.querySelector("#listContent");
-        globalThis.DOM.todoInput = this.querySelector("#textInput");
-        globalThis.DOM.addBtn = saveButton;
-
-        globalThis.DOM.addBtn.addEventListener("click", () => {
-            const cmd = new Command(Commands.ADD);
+    constructor(){
+        super();
+        this.attachShadow({ mode: 'open' });
+        const template = document.getElementById("home-page");
+        const clone = template.content.cloneNode(true);
+        const inputCard = clone.querySelector("#input_card");
+        const buttonClear = clone.querySelector("#button_card-clear");
+        const buttonAdd = clone.querySelector("#button_card-add");
+        const buttonSave = clone.querySelector("#button_card-save");
+        buttonSave.addEventListener("click", () => {
+            const cmd = new Command(Commands.SAVE_PRJ);
             CommandExecutor.execute(cmd);
-        });
-
-        renderList();
-        SavedItemList.getInstance().addObserver(renderList);
+            inputCard.value = ""; 
+        })
+        buttonAdd.addEventListener("click", () => {
+            const cmd = new Command(Commands.ADD, inputCard.value.trim());
+            CommandExecutor.execute(cmd);
+            inputCard.value = "";
+        })
+        buttonClear.addEventListener("click", () => {
+            const cmd = new Command(Commands.CLEAR);
+            CommandExecutor.execute(cmd);
+            inputCard.value = "";
+        })
+        this.shadowRoot.appendChild(clone);
     }
+
+  connectedCallback() {
+      
+  }
 }
 customElements.define("home-page", HomePage);
